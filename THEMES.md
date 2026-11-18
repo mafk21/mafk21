@@ -23,6 +23,32 @@ profile changes.
 | `04` | **Blueprint** | drafting navy `#0a1a2b` | azure `#4cc2ff` | sans |
 | `05` | **Paper** | warm off-white `#f4efe5` | rust `#a8441f` | serif |
 
+## The interactive page
+
+`index.html` is a self-contained page (no build step, no dependencies) that
+inlines all five cards and lets a visitor:
+
+- **switch themes** with the swatches, keys `1`–`5`, or a `#theme` hash
+- **replay the intro** animation on any theme (`R`)
+- **toggle reduced motion**, which also honours the OS setting
+- **click any project row** to open that repository
+- keep their choice in `localStorage`
+
+```bash
+python3 tools/build-page.py      # rebuild index.html from the cards
+```
+
+Serve it with `python3 -m http.server` or enable GitHub Pages on `main`.
+
+### Why the README cannot be interactive
+
+GitHub runs markdown through `html-pipeline`, whose sanitizer is explicit:
+`:remove_contents => ['script']` and an element whitelist of
+`a, img, div, p, details, summary, table, …`. `id` is not in the allowed
+attribute list either. So a README can **animate** (CSS and SMIL survive in an
+`<img>`) but cannot **respond to input**. Anything interactive has to live on a
+page, which is why this one exists.
+
 ## Why one card
 
 A stack of images reflows unpredictably: GitHub controls the column width, so

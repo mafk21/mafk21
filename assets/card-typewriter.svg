@@ -76,7 +76,7 @@
     <text x="86" y="226" text-anchor="start" fill="#e6edf3" fill-opacity="0.58" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="3.0" font-weight="500">BUILDING JARVIS · LOCAL-FIRST</text>
   </g>
 
-  <g stroke="#e6edf3" fill="#e6edf3">
+  <g id="graph" stroke="#e6edf3" fill="#e6edf3">
       <circle class="orbit" cx="806" cy="138" r="52" fill="none" opacity="0.28"
               stroke-dasharray="3 9" stroke-width="1"/>
       <path d="M806 138 L740 108" opacity="0.34" stroke-width="1"/>

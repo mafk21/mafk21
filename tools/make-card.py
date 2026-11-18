@@ -112,7 +112,7 @@ def masthead(t: Theme) -> tuple[str, int]:
     {caps(t, 86, 226, "BUILDING JARVIS · LOCAL-FIRST", size=10, op=0.58, track=3.0)}
   </g>
 
-  <g stroke="{t.ink}" fill="{t.ink}">
+  <g id="graph" stroke="{t.ink}" fill="{t.ink}">
       <circle class="orbit" cx="{cx}" cy="{cy}" r="52" fill="none" opacity="0.28"
               stroke-dasharray="3 9" stroke-width="1"/>
       {lines}
