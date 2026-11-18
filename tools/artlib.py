@@ -31,6 +31,7 @@ class Theme:
     muted: str
     font: str
     note: str
+    light: bool = False
 
 
 THEMES = {
@@ -49,7 +50,7 @@ THEMES = {
     "paper": Theme(
         "paper", "Paper",
         bg="#f4efe5", ink="#1b1a17", accent="#a8441f", muted="#7a7264",
-        font=SERIF,
+        font=SERIF, light=True,
         note="Light editorial page. Serif name, rubber stamp, marks fade in.",
     ),
     "signal": Theme(

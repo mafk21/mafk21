@@ -27,11 +27,24 @@ from artlib import (  # noqa: E402
 
 OUT = Path(__file__).resolve().parent.parent / "assets"
 
-W, H = 1000, 1560
+# Desktop card geometry. `PAD` and `W` are rebound by build_variant() when the
+# compact (mobile) card is generated, so every block below reads them at call
+# time rather than capturing them at import.
+W = 1000
 PAD = 64
+
+# Compact card: narrower canvas and larger type, so the same content stays
+# legible at ~375 CSS px. Every caption that was 9–12px becomes 13–17px.
+COMPACT = False
+KICKER_WRAP = 560
 
 
 # ── small helpers ─────────────────────────────────────────────────────────────
+
+
+def geom() -> tuple[int, int]:
+    """Current (width, pad) — rebound for the compact variant."""
+    return W, PAD
 
 
 def wrap(text: str, width: int, size: float) -> list[str]:
@@ -76,11 +89,20 @@ def rule(x1: int, y: int, x2: int, t: Theme, op: float = 0.18,
 
 def masthead(t: Theme) -> tuple[str, int]:
     """Banner block on its own timeline. Returns markup and the y it ends at."""
-    h = 268
-    cx, cy = 806, 138
+    W, PAD = geom()
+    scale = 1.0 if not COMPACT else 0.92
+    h = 268 if not COMPACT else 292
+
+    name_size = round(62 * scale) if not COMPACT else 58
+    cx, cy = (806, 138) if not COMPACT else (W - 132, 128)
+    graph_r = 52 if not COMPACT else 46
+
     ring = [(cx - 66, cy - 30), (cx + 64, cy - 22), (cx - 54, cy + 40),
             (cx + 50, cy + 42), (cx - 90, cy + 6)]
     leaves = [(cx - 84, cy - 58), (cx + 96, cy + 4)]
+    if COMPACT:   # shrink the graph to fit the narrower column
+        ring = [(cx + round((x - cx) * .82), cy + round((y - cy) * .82)) for x, y in ring]
+        leaves = [(cx + round((x - cx) * .82), cy + round((y - cy) * .82)) for x, y in leaves]
     edges = [((cx, cy), p) for p in ring] + [(ring[0], leaves[0]), (ring[1], leaves[1])]
 
     lines = "\n      ".join(
@@ -96,24 +118,40 @@ def masthead(t: Theme) -> tuple[str, int]:
         for i, e in enumerate(edges[:5])
     )
 
-    name_w, reveal = 372, 382
+    # The name reveal: measured per size so the clip and write-head agree.
+    name_w = round(len(NAME) * name_size * 0.60)
+    reveal = name_w + 10
+    name_y = 182 if not COMPACT else 190
+
+    # The kicker must never run under the graph — wider cards keep one line,
+    # the compact card wraps it.
+    if COMPACT:
+        kick = (f'<text x="{PAD}" y="96" fill="{t.ink}" fill-opacity="0.62" '
+                f'font-family="{SANS}" font-size="18" letter-spacing="2.4" font-weight="500">'
+                f'<tspan x="{PAD}" dy="0">LOCAL-FIRST AI · AUTONOMOUS</tspan>'
+                f'<tspan x="{PAD}" dy="24">AGENTS · TOOLS THAT SHIP AS FILES</tspan></text>')
+        kicker_bottom = 120
+    else:
+        kick = caps(t, PAD, 92, KICKER, size=11, op=0.62, cls="rise-a", track=4.0)
+        kicker_bottom = 92
+
     markup = f"""
   <g clip-path="url(#nameclip)">
-    <text x="64" y="182" fill="{t.ink}" font-family="{SERIF}" font-size="62"
+    <text x="{PAD}" y="{name_y}" fill="{t.ink}" font-family="{SERIF}" font-size="{name_size}"
           letter-spacing="0.2">{NAME}</text>
   </g>
-  <rect class="writehead" x="{64 + reveal - 2}" y="126" width="2.5" height="58" fill="{t.accent}"/>
+  <rect class="writehead" x="{PAD + reveal - 2}" y="{name_y - 56}" width="2.5" height="58" fill="{t.accent}"/>
 
-  {caps(t, 64, 92, KICKER, size=11, op=0.62, cls="rise-a", track=4.0)}
-  {rule(64, 200, 64 + 372, t, op=0.9, accent=True, cls="rule-draw")}
+  {kick}
+  {rule(PAD, name_y + 18, PAD + name_w, t, op=0.9, accent=True, cls="rule-draw")}
 
   <g class="rise-c">
-    <circle class="live" cx="72" cy="222" r="3.2" fill="{t.accent}"/>
-    {caps(t, 86, 226, "BUILDING JARVIS · LOCAL-FIRST", size=10, op=0.58, track=3.0)}
+    <circle class="live" cx="{PAD + 8}" cy="{name_y + 40}" r="3.2" fill="{t.accent}"/>
+    {caps(t, PAD + 22, name_y + 44, "BUILDING JARVIS · LOCAL-FIRST", size=_st(10), op=0.72, track=3.0)}
   </g>
 
   <g id="graph" stroke="{t.ink}" fill="{t.ink}">
-      <circle class="orbit" cx="{cx}" cy="{cy}" r="52" fill="none" opacity="0.28"
+      <circle class="orbit" cx="{cx}" cy="{cy}" r="{graph_r}" fill="none" opacity="0.28"
               stroke-dasharray="3 9" stroke-width="1"/>
       {lines}
       {dots}
@@ -125,11 +163,29 @@ def masthead(t: Theme) -> tuple[str, int]:
     return markup, h
 
 
+def _st(v: int) -> int:
+    """Type scale for the current variant.
+
+    The compact card is only 720 wide, so it renders at 375/720 = 0.52× on a
+    phone. Small text therefore needs a much bigger canvas size to survive:
+    10px desktop → 18px compact gives ~9.4px on screen, the practical floor.
+    """
+    return v if not COMPACT else round(v * 1.75)
+
+
 def flow_band(t: Theme, top: int) -> tuple[str, int]:
     """Four stations across the card. Scaled down from the 1280-wide band."""
-    h = 250
-    cy = top + 96
-    xs = [150, 383, 616, 849]
+    W, PAD = geom()
+    h = 250 if not COMPACT else 268
+    cy = top + (96 if not COMPACT else 104)
+    if COMPACT:
+        span = W - PAD * 2
+        xs = [round(PAD + span * f) for f in (0.0, 0.335, 0.665, 0.99)]
+        xs = [x + (0 if i == 0 else 0) for i, x in enumerate(xs)]
+        xs[0] += 26; xs[-1] -= 26
+    else:
+        xs = [150, 383, 616, 849]
+    scale = 1.0 if not COMPACT else 1.12
     icons = {
         "brief": f'''<g stroke="{t.ink}" fill="none" stroke-width="1.5" stroke-linecap="round">
         <rect x="{0}" y="{0}" width="34" height="44" rx="2"/>
@@ -168,11 +224,11 @@ def flow_band(t: Theme, top: int) -> tuple[str, int]:
   <g transform="translate({x} {cy})" fill="{t.ink}" class="stn" style="animation-delay:{d}s">
     {icons[kind]}
   </g>
-  {caps(t, x, cy + 58, f"0{i+1}", size=10, op=0.7, anchor="middle", fill=t.accent,
+  {caps(t, x, cy + 58, f"0{i+1}", size=_st(10), op=0.78, anchor="middle", fill=t.accent,
         cls="stn", track=2.2).replace('<text', f'<text style="animation-delay:{d + .12}s"', 1)}
-  {caps(t, x, cy + 82, name, size=12, op=0.92, anchor="middle", cls="stn", track=3.2)
+  {caps(t, x, cy + _st(82), name, size=_st(13), op=0.95, anchor="middle", cls="stn", track=3.2)
         .replace('<text', f'<text style="animation-delay:{d + .18}s"', 1)}
-  {caps(t, x, cy + 101, gloss, size=11, op=0.44, anchor="middle", cls="stn")
+  {caps(t, x, cy + _st(101), gloss, size=_st(12), op=0.62, anchor="middle", cls="stn")
         .replace('<text', f'<text style="animation-delay:{d + .24}s"', 1)}''')
 
     routes, packets = [], []
@@ -191,7 +247,7 @@ def flow_band(t: Theme, top: int) -> tuple[str, int]:
   {"".join(parts)}
   <g stroke="{t.accent}" fill="none" class="rise-b">{"".join(routes)}</g>
   <g fill="{t.accent}">{"".join(packets)}</g>
-  {caps(t, W / 2, top + h - 12, "ONE MACHINE · NOTHING LEAVES IT", size=10, op=0.42,
+  {caps(t, W / 2, top + h - 12, "ONE MACHINE · NOTHING LEAVES IT", size=_st(10), op=0.62,
         anchor="middle", cls="rise-c", track=3.2)}
 """
     return markup, h
@@ -263,91 +319,118 @@ def glyph_signal(slug: str, kind: str, t: Theme) -> str:
 
 def projects_block(t: Theme, top: int) -> tuple[str, int]:
     """Rows size themselves: name, then wrapped blurb, then tag, then a rule."""
-    size, lh, text_w = 14, 21, W - PAD * 2 - 120
+    W, PAD = geom()
+    size = 14 if not COMPACT else 17
+    lh = size * 1.5
+    glyph_w = 104 if not COMPACT else 92
+    text_x = PAD + (120 if not COMPACT else 108)
+    text_w = W - PAD - text_x
     rows = []
-    y = top + 52
+    y = top + (52 if not COMPACT else 56)
     for i, (slug, label, kind, blurb, tag) in enumerate(PROJECTS):
         n = len(wrap(blurb, text_w, size))
         d = 0.55 + i * 0.09
         name_y = y
-        body_y = y + 22
-        tag_y = body_y + (n - 1) * lh + 24
-        sep_y = tag_y + 16
+        body_y = y + (28 if not COMPACT else 30)
+        tag_y = body_y + (n - 1) * lh + 26
+        sep_y = tag_y + 18
+        gscale = 1.0 if not COMPACT else 0.92
         rows.append(f'''
   <g class="row" style="animation-delay:{d}s">
-    <g transform="translate({PAD + 52} {name_y + 8})">{glyph_signal(slug, kind, t)}</g>
-    <text x="{PAD + 120}" y="{name_y + 6}" fill="{t.ink}" font-family="{SANS}" font-size="19"
-          font-weight="600">{label}</text>
-    {para(PAD + 120, body_y + 6, blurb, t, width=text_w, size=size, lh=lh / size, op=0.66)}
-    {caps(t, PAD + 120, tag_y + 6, tag.upper(), size=9, op=0.55, fill=t.accent, track=2.6)}
+    <g transform="translate({PAD + glyph_w/2} {name_y + 8}) scale({gscale})">{glyph_signal(slug, kind, t)}</g>
+    <text x="{text_x}" y="{name_y + 6}" fill="{t.ink}" font-family="{SANS}"
+          font-size="{20 if not COMPACT else 26}" font-weight="600">{label}</text>
+    {para(text_x, body_y + 6, blurb, t, width=text_w, size=size, lh=lh / size, op=0.72)}
+    {caps(t, text_x, tag_y + 6, tag.upper(), size=_st(10), op=1.0 if t.light else 0.78, fill=t.accent, track=2.6)}
   </g>
   {rule(PAD, sep_y, W - PAD, t, op=0.10)}''')
-        y = sep_y + 22
+        y = sep_y + (22 if not COMPACT else 26)
     markup = f"""
-  {caps(t, PAD, top + 10, "SELECTED WORK", size=12, op=0.66, cls="rise-a", track=4.4)}
+  {caps(t, PAD, top + 10, "SELECTED WORK", size=_st(12), op=0.74, cls="rise-a", track=4.4)}
   {"".join(rows)}
 """
     return markup, y - top
 
 
 def footer_block(t: Theme, top: int) -> tuple[str, int]:
+    W, PAD = geom()
     principles = [
         ("Local-first by default.", "Your keys, your machine, your files."),
         ("The output is a file.", "HTML you can open, a .pptx you can edit, evidence you can keep."),
         ("Say the limits out loud.", "Unverified installers and trade-offs are written down, not discovered."),
         ("Fewer, better parts.", "Zero pip dependencies where possible; one clear path to run it."),
     ]
+    body = 15 if not COMPACT else 18
     items = []
     y = top + 40
     for i, (lead, rest) in enumerate(principles):
         items.append(f'''
   <g class="row" style="animation-delay:{0.9 + i * 0.09}s">
-    <circle cx="{PAD + 4}" cy="{y - 5}" r="3" fill="{t.accent}" opacity="0.85"/>
-    <text x="{PAD + 20}" y="{y}" fill="{t.ink}" font-family="{SANS}" font-size="15"
+    <circle cx="{PAD + 4}" cy="{y - 5}" r="3" fill="{t.accent}" opacity="0.9"/>
+    <text x="{PAD + 20}" y="{y}" fill="{t.ink}" font-family="{SANS}" font-size="{body}"
           font-weight="600">{lead}
-      <tspan fill="{t.ink}" fill-opacity="0.62" font-weight="400">{rest}</tspan>
+      <tspan fill="{t.ink}" fill-opacity="0.72" font-weight="400">{rest}</tspan>
     </text>
   </g>''')
-        y += 30
+        y += 30 if not COMPACT else 36
 
     stack = ["Python", "TypeScript", "JavaScript", "Astro", "Node",
              "Electron", "Playwright", "SQLite / FTS5", "MCP", "GitHub Actions"]
+    chip_size = 11 if not COMPACT else 13
     x, sy = PAD, y + 26
     chips = []
     for label in stack:
-        w = 22 + len(label) * 7.4
+        w = 22 + len(label) * (7.4 if not COMPACT else 8.4)
         if x + w > W - PAD:
             x, sy = PAD, sy + 34
         chips.append(
             f'<rect x="{x:.0f}" y="{sy - 16}" width="{w:.0f}" height="26" rx="13" '
             f'fill="{t.ink}" fill-opacity="0.06" stroke="{t.ink}" stroke-opacity="0.14"/>'
             f'<text x="{x + w/2:.0f}" y="{sy + 2}" text-anchor="middle" fill="{t.ink}" '
-            f'fill-opacity="0.72" font-family="{MONO}" font-size="11">{label}</text>'
+            f'fill-opacity="0.72" font-family="{MONO}" font-size="{chip_size}">{label}</text>'
         )
         x += w + 10
 
+    # Contact: stacked on the compact card so nothing collides.
+    link_size = 14 if not COMPACT else 16
+    if COMPACT:
+        contact = "".join(
+            f'<text x="{PAD}" y="{sy + 66 + i * 26}" fill="{t.ink}" font-family="{SANS}" '
+            f'font-size="{link_size}" fill-opacity="0.82">{txt}</text>'
+            for i, txt in enumerate(["guns.lol/dr.abo3tab",
+                                     "mbm143105@gmail.com",
+                                     "github.com/mafk21"])
+        )
+        contact_bottom = sy + 66 + 3 * 26
+    else:
+        contact = f"""
+    <text x="{PAD}" y="{sy + 66}" fill="{t.ink}" font-family="{SANS}" font-size="{link_size}"
+          fill-opacity="0.82">guns.lol/dr.abo3tab</text>
+    <circle cx="{W/2 - 30}" cy="{sy + 62}" r="1.8" fill="{t.accent}" opacity="0.8"/>
+    <text x="{W/2 - 12}" y="{sy + 66}" fill="{t.ink}" font-family="{SANS}" font-size="{link_size}"
+          fill-opacity="0.82">mbm143105@gmail.com</text>
+    <circle cx="{W - PAD - 132}" cy="{sy + 62}" r="1.8" fill="{t.accent}" opacity="0.8"/>
+    <text x="{W - PAD - 114}" y="{sy + 66}" fill="{t.ink}" font-family="{SANS}" font-size="{link_size}"
+          fill-opacity="0.82">github.com/mafk21</text>"""
+        contact_bottom = sy + 66
+
     markup = f"""
-  {caps(t, PAD, top - 4, "HOW I BUILD", size=12, op=0.66, cls="rise-a", track=4.4)}
+  {caps(t, PAD, top - 4, "HOW I BUILD", size=_st(12), op=0.74, cls="rise-a", track=4.4)}
   {"".join(items)}
   <g class="rise-c">{"".join(chips)}</g>
   {rule(PAD, sy + 34, W - PAD, t, op=0.2)}
-
-  <g class="rise-c">
-    <text x="{PAD}" y="{sy + 66}" fill="{t.ink}" font-family="{SANS}" font-size="14"
-          fill-opacity="0.8">guns.lol/dr.abo3tab</text>
-    <circle cx="{W/2 - 30}" cy="{sy + 62}" r="1.8" fill="{t.accent}" opacity="0.8"/>
-    <text x="{W/2 - 12}" y="{sy + 66}" fill="{t.ink}" font-family="{SANS}" font-size="14"
-          fill-opacity="0.8">mbm143105@gmail.com</text>
-    <circle cx="{W - PAD - 132}" cy="{sy + 62}" r="1.8" fill="{t.accent}" opacity="0.8"/>
-    <text x="{W - PAD - 114}" y="{sy + 66}" fill="{t.ink}" font-family="{SANS}" font-size="14"
-          fill-opacity="0.8">github.com/mafk21</text>
+  <g class="rise-c">{contact}
   </g>
 """
-    return markup, sy + 66 - top
+    return markup, contact_bottom - top
 
 
 def card(t: Theme) -> str:
-    name_w, reveal = 372, 382
+    W, PAD = geom()
+    # The reveal must match the name's measured width for this variant.
+    name_size = 62 if not COMPACT else 58
+    name_w = round(len(NAME) * name_size * 0.60)
+    reveal = name_w + 10
 
     css = f"""
     @keyframes rise    {{ from {{ opacity: 0; transform: translateY(9px); }} to {{ opacity: 1; transform: none; }} }}
@@ -369,15 +452,33 @@ def card(t: Theme) -> str:
     {REDUCED}"""
 
     mast, mast_h = masthead(t)
-    band_top = mast_h + 12
-    band, band_h = flow_band(t, band_top)
-    proj_top = band_top + band_h + 14
-    proj, proj_h = projects_block(t, proj_top)
-    foot_top = proj_top + proj_h + 18
-    foot, foot_h = footer_block(t, foot_top)
+    y = mast_h + 12
+
+    # The compact card is the judgement call: on a phone the band's four
+    # stations and the principles both collapse into unreadable specks, so the
+    # compact card keeps the masthead, the work, and the contact links only.
+    band = band_h = proj = proj_h = foot = foot_h = ""
+    if not COMPACT:
+        band, band_h = flow_band(t, y)
+        y += band_h + 14
+    proj, proj_h = projects_block(t, y)
+    y += proj_h + (18 if not COMPACT else 10)
+    if not COMPACT:
+        foot, foot_h = footer_block(t, y)
+        y += foot_h
+    else:
+        contact = "".join(
+            f'<text x="{PAD}" y="{y + 34 + i * 30}" fill="{t.ink}" font-family="{SANS}" '
+            f'font-size="19" fill-opacity="0.86" class="rise-c">{txt}</text>'
+            for i, txt in enumerate(["guns.lol/dr.abo3tab",
+                                     "mbm143105@gmail.com",
+                                     "github.com/mafk21"])
+        )
+        foot = contact
+        foot_h = 34 + 3 * 30
 
     body = mast + band + proj + foot
-    used = foot_top + foot_h + 56          # room for the closing rule
+    used = y + 56
     height = int(used + 24)
 
     return f"""{head(t, W, height, "Dr. Abo 3tab — local-first AI: an animated profile card showing selected work, how a build runs, and how I build")}
@@ -387,7 +488,7 @@ def card(t: Theme) -> str:
       <stop offset="100%" stop-color="{t.accent}" stop-opacity="0"/>
     </radialGradient>
     <clipPath id="nameclip">
-      <rect x="64" y="120" width="{reveal}" height="80">
+      <rect x="{PAD}" y="{120 if not COMPACT else 126}" width="{reveal}" height="80">
         <animate attributeName="width" from="0" to="{reveal}" dur="1.8s" begin="0.3s"
                  fill="freeze" calcMode="spline" keySplines="0.22 0.9 0.25 1"
                  keyTimes="0;1" values="0;{reveal}"/>
@@ -410,14 +511,25 @@ def card(t: Theme) -> str:
 """
 
 
-def main() -> None:
+def build_variant(compact: bool) -> None:
+    """Generate every theme's card for one variant."""
+    global W, PAD, COMPACT
+    COMPACT = compact
+    W = 1000 if not compact else 720
+    PAD = 64 if not compact else 52
+    suffix = "" if not compact else "-compact"
+
     for key in ORDER:
-        t = THEMES[key]
-        svg = card(t)
-        p = OUT / f"card-{key}.svg"
-        p.write_text(svg, encoding="utf-8")
-        # sanity: the card must not overflow its own canvas
-        print(f"{key:11s} card  {p.stat().st_size:>7,} B")
+        svg = card(THEMES[key])
+        path = OUT / f"card-{key}{suffix}.svg"
+        path.write_text(svg, encoding="utf-8")
+        print(f"{key + suffix:21s} {path.stat().st_size:>7,} B")
+
+
+def main() -> None:
+    build_variant(compact=False)
+    print()
+    build_variant(compact=True)
 
 
 if __name__ == "__main__":
