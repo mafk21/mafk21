@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="216" viewBox="0 0 1280 216" role="img" aria-label="Dr. Abo 3tab — local-first AI systems, autonomous agents, tools that run on your own machine">
+  <defs>
+    <radialGradient id="sglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e8a33d" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#e8a33d" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="sclip"><rect class="clip" x="0" y="60" width="480" height="90">
+      <animate attributeName="width" from="0" to="480" dur="1.8s" begin="0.35s"
+               fill="freeze" calcMode="spline" keySplines="0.22 0.9 0.25 1"
+               keyTimes="0;1" values="0;480"/>
+    </rect></clipPath>
+  </defs>
+  <style>
+    @keyframes glow   { 0%,100% { opacity: .20; } 50% { opacity: .40; } }
+    @keyframes head   { 0% { opacity: 0; } 8% { opacity: .95; } 92% { opacity: .95; } 100% { opacity: .25; } }
+    @keyframes breath { 0%,100% { opacity: .55; r: 8; } 50% { opacity: .95; r: 10; } }
+    @keyframes spin   { to { transform: rotate(360deg); } }
+    @keyframes rise   { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes live   { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    @keyframes draw   { from { stroke-dashoffset: 460; } to { stroke-dashoffset: 0; } }
+    .glow  { animation: glow 7s ease-in-out infinite; }
+    .head  { animation: head 1.9s ease-out both; }
+    .ring  { animation: spin 46s linear infinite; transform-origin: 1124px 110px; }
+    .breath{ animation: breath 4.2s ease-in-out infinite; }
+    .k1    { animation: rise .8s 1.15s cubic-bezier(.2,.7,.3,1) both; }
+    .k2    { animation: rise .8s 1.35s cubic-bezier(.2,.7,.3,1) both; }
+    .rule  { stroke-dasharray: 460; animation: draw 1.1s 1.0s ease-out both; }
+    .live  { animation: live 2.4s ease-in-out infinite; }
+    
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+  <rect width="1280" height="216" rx="0" fill="#08090c"/>
+
+  <ellipse class="glow" cx="236" cy="126" rx="300" ry="58" fill="url(#sglow)" opacity="0.26"/>
+
+  <g stroke="#f2efe9" fill="none" opacity="0.5">
+    <path d="M0 30 H1280" opacity="0.30"/>
+      <path d="M0 30 V42" opacity="0.28"/>
+      <path d="M64 30 V37" opacity="0.27"/>
+      <path d="M128 30 V37" opacity="0.26"/>
+      <path d="M192 30 V37" opacity="0.25"/>
+      <path d="M256 30 V42" opacity="0.24"/>
+      <path d="M320 30 V37" opacity="0.23"/>
+      <path d="M384 30 V37" opacity="0.21"/>
+      <path d="M448 30 V37" opacity="0.20"/>
+      <path d="M512 30 V42" opacity="0.19"/>
+      <path d="M576 30 V37" opacity="0.18"/>
+      <path d="M640 30 V37" opacity="0.17"/>
+      <path d="M704 30 V37" opacity="0.16"/>
+      <path d="M768 30 V42" opacity="0.15"/>
+      <path d="M832 30 V37" opacity="0.14"/>
+      <path d="M896 30 V37" opacity="0.13"/>
+      <path d="M960 30 V37" opacity="0.12"/>
+      <path d="M1024 30 V42" opacity="0.10"/>
+      <path d="M1088 30 V37" opacity="0.09"/>
+      <path d="M1152 30 V37" opacity="0.09"/>
+      <path d="M1216 30 V37" opacity="0.09"/>
+      <path d="M1280 30 V42" opacity="0.09"/>
+    <path d="M0 198 H1280" opacity="0.22"/>
+  </g>
+
+  <g clip-path="url(#sclip)">
+    <text x="2" y="150" fill="#f2efe9" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', serif" font-size="74"
+          letter-spacing="0.2">Dr. Abo 3tab</text>
+  </g>
+
+  <rect class="head" x="478" y="88" width="2.5" height="66" fill="#e8a33d"/>
+
+  <path class="rule" d="M2 174 H462" stroke="#e8a33d" stroke-width="1.6" opacity="0.85"/>
+
+  <text x="4" y="70" class="k1" text-anchor="start" fill="#f2efe9" fill-opacity="0.6" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" letter-spacing="4.4" font-weight="500">LOCAL-FIRST AI  ·  AUTONOMOUS AGENTS  ·  TOOLS THAT SHIP AS FILES</text>
+
+  <g class="k2">
+    <circle class="live" cx="16" cy="196" r="3.4" fill="#e8a33d"/>
+    <text x="30" y="200" text-anchor="start" fill="#f2efe9" fill-opacity="0.58" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10" letter-spacing="3.2" font-weight="500">BUILDING JARVIS · LOCAL-FIRST</text>
+  </g>
+
+  <g stroke="#f2efe9" fill="#f2efe9">
+      <circle class="ring" cx="1124" cy="110" r="64" fill="none" opacity="0.30"
+              stroke-dasharray="3 9" stroke-width="1"/>
+      <path d="M1124 110 L1032 70" opacity="0.34" stroke-width="1"/>
+      <path d="M1124 110 L1212 80" opacity="0.34" stroke-width="1"/>
+      <path d="M1124 110 L1050 164" opacity="0.34" stroke-width="1"/>
+      <path d="M1124 110 L1194 168" opacity="0.34" stroke-width="1"/>
+      <path d="M1124 110 L1000 120" opacity="0.34" stroke-width="1"/>
+      <path d="M1032 70 L1008 30" opacity="0.34" stroke-width="1"/>
+      <path d="M1212 80 L1256 118" opacity="0.34" stroke-width="1"/>
+      <circle cx="1032" cy="70" r="2.9" opacity="0.9"/>
+      <circle cx="1212" cy="80" r="2.9" opacity="0.9"/>
+      <circle cx="1050" cy="164" r="2.9" opacity="0.9"/>
+      <circle cx="1194" cy="168" r="2.9" opacity="0.9"/>
+      <circle cx="1000" cy="120" r="2.9" opacity="0.9"/>
+      <circle cx="1008" cy="30" r="2.1" opacity="0.66"/>
+      <circle cx="1256" cy="118" r="2.1" opacity="0.66"/>
+      <circle class="breath" cx="1124" cy="110" r="8" fill="#e8a33d"/>
+      <circle cx="0" cy="0" r="2.2" fill="#e8a33d" opacity="0">
+        <animateMotion dur="4.2s" begin="0.0s" repeatCount="indefinite" path="M1124 110 L1032 70" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.6 1"/>
+        <animate attributeName="opacity" dur="4.2s" begin="0.0s" repeatCount="indefinite" values="0;0.9;0.9;0" keyTimes="0;0.12;0.86;1"/>
+      </circle>
+      <circle cx="0" cy="0" r="2.2" fill="#e8a33d" opacity="0">
+        <animateMotion dur="4.2s" begin="0.45s" repeatCount="indefinite" path="M1124 110 L1212 80" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.6 1"/>
+        <animate attributeName="opacity" dur="4.2s" begin="0.45s" repeatCount="indefinite" values="0;0.9;0.9;0" keyTimes="0;0.12;0.86;1"/>
+      </circle>
+      <circle cx="0" cy="0" r="2.2" fill="#e8a33d" opacity="0">
+        <animateMotion dur="4.2s" begin="0.9s" repeatCount="indefinite" path="M1124 110 L1050 164" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.6 1"/>
+        <animate attributeName="opacity" dur="4.2s" begin="0.9s" repeatCount="indefinite" values="0;0.9;0.9;0" keyTimes="0;0.12;0.86;1"/>
+      </circle>
+      <circle cx="0" cy="0" r="2.2" fill="#e8a33d" opacity="0">
+        <animateMotion dur="4.2s" begin="1.35s" repeatCount="indefinite" path="M1124 110 L1194 168" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.6 1"/>
+        <animate attributeName="opacity" dur="4.2s" begin="1.35s" repeatCount="indefinite" values="0;0.9;0.9;0" keyTimes="0;0.12;0.86;1"/>
+      </circle>
+      <circle cx="0" cy="0" r="2.2" fill="#e8a33d" opacity="0">
+        <animateMotion dur="4.2s" begin="1.8s" repeatCount="indefinite" path="M1124 110 L1000 120" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.4 0 0.6 1"/>
+        <animate attributeName="opacity" dur="4.2s" begin="1.8s" repeatCount="indefinite" values="0;0.9;0.9;0" keyTimes="0;0.12;0.86;1"/>
+      </circle>
+  </g>
+  <circle cx="1124" cy="110" r="2.6" fill="#08090c"/>
+</svg>
