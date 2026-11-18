@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="188" viewBox="0 0 1280 188" role="img" aria-label="Dr. Abo 3tab — local-first AI, written and drawn by hand">
+  <style>
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes stamp { 0% { opacity: 0; transform: rotate(-8deg) scale(1.35); }
+                       60% { opacity: .9; transform: rotate(-8deg) scale(.96); }
+                       100% { opacity: .85; transform: rotate(-8deg) scale(1); } }
+    .name  { animation: rise .8s .2s cubic-bezier(.2,.7,.3,1) both; }
+    .kmid  { animation: rise .8s .5s cubic-bezier(.2,.7,.3,1) both; }
+    .stamp { animation: stamp .9s 1.1s cubic-bezier(.2,.7,.3,1) both;
+              transform-origin: 1130px 118px; }
+    
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+  <rect width="1280" height="188" rx="0" fill="#f4efe5"/>
+  <g stroke="#1b1a17" fill="none">
+    <path d="M0 34 H1280" opacity="0.30"/>
+      <path d="M0 34 V47" opacity="0.28"/>
+      <path d="M64 34 V42" opacity="0.27"/>
+      <path d="M128 34 V42" opacity="0.26"/>
+      <path d="M192 34 V42" opacity="0.25"/>
+      <path d="M256 34 V47" opacity="0.24"/>
+      <path d="M320 34 V42" opacity="0.23"/>
+      <path d="M384 34 V42" opacity="0.21"/>
+      <path d="M448 34 V42" opacity="0.20"/>
+      <path d="M512 34 V47" opacity="0.19"/>
+      <path d="M576 34 V42" opacity="0.18"/>
+      <path d="M640 34 V42" opacity="0.17"/>
+      <path d="M704 34 V42" opacity="0.16"/>
+      <path d="M768 34 V47" opacity="0.15"/>
+      <path d="M832 34 V42" opacity="0.14"/>
+      <path d="M896 34 V42" opacity="0.13"/>
+      <path d="M960 34 V42" opacity="0.12"/>
+      <path d="M1024 34 V47" opacity="0.10"/>
+      <path d="M1088 34 V42" opacity="0.09"/>
+      <path d="M1152 34 V42" opacity="0.09"/>
+      <path d="M1216 34 V42" opacity="0.09"/>
+      <path d="M1280 34 V47" opacity="0.09"/>
+    <path d="M0 176 H1280" opacity="0.28"/>
+  </g>
+
+  <text x="40" y="74" class="kmid" text-anchor="start" fill="#1b1a17" fill-opacity="0.55" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" letter-spacing="4.2" font-weight="500">A SMALL PRACTICE IN LOCAL MACHINES</text>
+
+  <text class="name" x="38" y="146" fill="#1b1a17" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', serif" font-size="66"
+        letter-spacing="0.4">Dr. Abo 3tab</text>
+
+  <g class="stamp" opacity="0.85">
+    <rect x="1046" y="86" width="168" height="64" rx="3" fill="none"
+          stroke="#a8441f" stroke-width="2"/>
+    <rect x="1052" y="92" width="156" height="52" rx="2" fill="none"
+          stroke="#a8441f" stroke-width="0.8" opacity="0.7"/>
+    <text x="1130" y="114" text-anchor="middle" fill="#a8441f" fill-opacity="1" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" letter-spacing="3" font-weight="500">APPROVED</text>
+    <text x="1130" y="132" text-anchor="middle" fill="#a8441f" fill-opacity="0.9" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="9" letter-spacing="2.4" font-weight="500">LOCAL ONLY</text>
+  </g>
+</svg>
