@@ -42,7 +42,7 @@ def banner_typewriter(t: Theme) -> str:
 
     # A block caret parked one character past the name; width is an estimate of
     # the string at 58px monospace (0.6em advance).
-    caret_x = 40 + round(len(typed) * 58 * 0.6) + 10
+    caret_x = 40 + round(len(typed) * 50 * 0.6) + 10
 
     return f"""{head(t, W, H, f"{NAME} — local-first AI systems, autonomous agents, tools that run on your own machine")}
   <style>{css}
@@ -53,20 +53,20 @@ def banner_typewriter(t: Theme) -> str:
     {ticks(34, W, 64, t.ink)}
   </g>
 
-  <rect x="24" y="14" width="1232" height="160" rx="8" fill="none" stroke="{t.ink}" stroke-opacity="0.16"/>
+  <rect x="24" y="14" width="1232" height="164" rx="8" fill="none" stroke="{t.ink}" stroke-opacity="0.16"/>
   <g fill="{t.ink}" fill-opacity="0.35">
     <circle cx="44" cy="30" r="3.2"/><circle cx="58" cy="30" r="3.2"/><circle cx="72" cy="30" r="3.2"/>
   </g>
   {caps(t, 700, 34, "MAFK21 · PROFILE", size=11, op=0.3, cls="rise3")}
 
-  <text x="40" y="96" fill="{t.accent}" font-family="{MONO}" font-size="15" opacity="0.9"
+  <text x="40" y="92" fill="{t.accent}" font-family="{MONO}" font-size="15" opacity="0.9"
         class="rise1">~/profile $ whoami</text>
 
-  <text x="40" y="152" fill="{t.ink}" font-family="{MONO}" font-size="52"
+  <text x="40" y="144" fill="{t.ink}" font-family="{MONO}" font-size="50"
         letter-spacing="1">{typed}</text>
-  <rect class="caret" x="{caret_x}" y="116" width="22" height="40" fill="{t.accent}" opacity="0.85"/>
+  <rect class="caret" x="{caret_x}" y="112" width="20" height="38" fill="{t.accent}" opacity="0.85"/>
 
-  {caps(t, 40, 178, KICKER, size=10, op=0.34, cls="rise2", track=3.6)}
+  {caps(t, 40, 166, KICKER, size=10, op=0.40, cls="rise2", track=3.6)}
 
   <rect class="scan" x="24" y="16" width="1232" height="2" fill="{t.accent}" opacity="0.10"/>
 </svg>
