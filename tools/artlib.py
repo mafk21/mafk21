@@ -4,10 +4,11 @@
 Four complete looks, each with its own background so it reads the same on
 GitHub's light and dark themes. Every theme animates text, band, and glyphs:
 
-  01 typewriter  terminal card, typed title with a block caret, scanline
-  02 blueprint   deep blue sheet, self-drawing lines, dimension marks
-  03 paper       warm off-white, serif, ink stamp, hand-rule marks
-  04 swarm       the node graph, travelling packets, nine cursors
+  01 signal      near-black, the name writes itself out, amber graph
+  02 swarm       the node graph, travelling packets, nine cursors
+  03 typewriter  terminal card, typed title with a block caret, scanline
+  04 blueprint   deep blue sheet, self-drawing lines, dimension marks
+  05 paper       warm off-white, serif, ink stamp, hand-rule marks
 
 Motion is CSS `@keyframes` (works on GitHub — snk and capsule-render both rely
 on it) with SMIL only where a shape has to travel a path.
@@ -51,6 +52,13 @@ THEMES = {
         font=SERIF,
         note="Light editorial page. Serif name, rubber stamp, marks fade in.",
     ),
+    "signal": Theme(
+        "signal", "Signal",
+        bg="#08090c", ink="#f2efe9", accent="#e8a33d", muted="#8b8b86",
+        font=SERIF,
+        note="Darkest look. The name draws itself, fills letter by letter, "
+             "and the graph answers in amber.",
+    ),
     "swarm": Theme(
         "swarm", "Swarm",
         bg="#0d1117", ink="#e9e7e1", accent="#d9b98a", muted="#8b8b86",
@@ -59,7 +67,7 @@ THEMES = {
     ),
 }
 
-ORDER = ["typewriter", "blueprint", "paper", "swarm"]
+ORDER = ["signal", "swarm", "typewriter", "blueprint", "paper"]
 
 
 # ── shared ────────────────────────────────────────────────────────────────────
@@ -142,16 +150,16 @@ PROJECTS = [
     ("swarmcraft", "Swarmcraft", "swarmcraft",
      "Describe a website and nine AI cursors draw it in front of you. Your own "
      "Gemini key, no backend, no model-written CSS.", "You keep the HTML"),
-    ("osint", "OSINT Monster", "OSINT",
+    ("osint", "OSINT Monster", "osint",
      "Autonomous recon engine: 45+ passive collectors, fully offline forensic "
      "decoders, graph studio, a validated 760-tool arsenal.", "Zero pip dependencies"),
-    ("nexus", "NEXUS", "NEXUS",
+    ("nexus", "NEXUS", "nexus",
      "A desktop that reshapes itself per task — categories → setups → "
      "activation, each with its own wallpaper, accent, and shortcuts.", "Electron"),
-    ("connect", "Connect Everything", "connect-everything",
+    ("connect", "Connect Everything", "connect",
      "534 hand-curated resources across 504 domains with 64 controlled tags. "
      "No accounts, no tracking, no ads.", "One click out"),
-    ("powerpoint", "PowerPoint Skill", "PowerPoint-skill",
+    ("powerpoint", "PowerPoint Skill", "powerpoint",
      "An AI skill for decks built on real research — Morph transitions, 13 "
      "layout blueprints, an Arabic/RTL path.", "238-record database"),
 ]

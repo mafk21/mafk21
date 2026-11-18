@@ -269,10 +269,16 @@ def station_icon(t: Theme, kind: str, x: int, cy: int) -> str:
 
 def band(t: Theme) -> str:
     W, H = 1280, 300
-    cy = 138
+    cy = 150
     xs = [150, 476, 802, 1128]
 
     icons = "\n    ".join(station_icon(t, k, x, cy) for x, (k, _, _) in zip(xs, STATIONS))
+
+    numbers = "\n    ".join(
+        caps(t, x, cy - 48, f"0{i+1}", size=10, op=0.75, anchor="middle",
+             fill=t.accent, cls=f"lab{i}", track=2.2)
+        for i, x in enumerate(xs)
+    )
 
     labels = "\n    ".join(
         caps(t, x, cy + 70, name, size=12, op=0.92, anchor="middle", cls=f"lab{i}", track=3.4)
@@ -300,6 +306,7 @@ def band(t: Theme) -> str:
     ) + REDUCED
 
     title = {
+        "signal": "HOW A BUILD RUNS",
         "typewriter": "HOW A BUILD RUNS",
         "blueprint": "ASSEMBLY ORDER",
         "paper": "The shape of the work",
@@ -313,10 +320,12 @@ def band(t: Theme) -> str:
   {card(t, W, H, rx=0)}
   <g stroke="{t.ink}" fill="none" opacity="0.5">
     {ticks(34, W, 64, t.ink)}
-    <path class="rule" d="M0 274 H{W}" opacity="0.3"/>
+    <path class="rule" d="M0 274 H{W}" opacity="0.42" stroke="{t.accent}"/>
   </g>
 
-  {caps(t, 40, 84, title, size=12, op=0.7, cls="lab0", track=4.6)}
+  {caps(t, 40, 76, title, size=12, op=0.7, cls="lab0", track=4.6)}
+
+  {numbers}
 
   <g fill="{t.ink}">
     {icons}
@@ -410,13 +419,19 @@ def glyph(t: Theme, kind: str) -> str:
                 f'<animate attributeName="opacity" values="0.7;0" dur="2.6s" repeatCount="indefinite"/>'
                 f'</circle></g>')
 
-    else:  # powerpoint
+    elif kind == "powerpoint":
         body = (
             f'<g {s}><rect x="14" y="20" width="38" height="26" rx="2" opacity="0.5"/>'
             f'<rect x="72" y="20" width="38" height="26" rx="2"/>'
             f'<path d="M34 36 H66" opacity="0.5" stroke-dasharray="2 4"/></g>'
             f'<path d="M60 30 l6 6 l-6 6" {s} opacity="0.9"><animate attributeName="opacity" '
             f'values="1;0.25;1" dur="2.2s" repeatCount="indefinite"/></path>'
+        )
+
+    else:
+        raise ValueError(
+            f"unknown glyph kind {kind!r} — expected one of "
+            "jarvis, swarmcraft, osint, nexus, connect, powerpoint"
         )
 
     return f"""{head(t, W, H, f"{kind} project schematic")}
@@ -429,7 +444,114 @@ def glyph(t: Theme, kind: str) -> str:
 # ══════════════════════════════════════════════════════════════════════════════
 
 
+
+def banner_signal(t: Theme) -> str:
+    """The refined swarm: darkest ground, the name writes itself, amber answers.
+
+    Motion, in order of what the eye catches:
+      1. a soft amber glow breathes behind the name
+      2. the name is revealed left-to-right by a clip, with a write-head riding
+         the edge and fading once the reveal finishes
+      3. an amber rule draws itself underneath, then the kicker and status pill
+         rise in
+      4. the graph answers: amber packets, a slow ring, breathing nodes
+    Everything rests in its finished state, so a still frame is complete.
+    """
+    W, H = 1280, 216
+    cx, cy = 1124, 110
+    ring = [(cx - 92, cy - 40), (cx + 88, cy - 30), (cx - 74, cy + 54),
+            (cx + 70, cy + 58), (cx - 124, cy + 10)]
+    leaves = [(cx - 116, cy - 80), (cx + 132, cy + 8)]
+    edges = [((cx, cy), p) for p in ring] + [(ring[0], leaves[0]), (ring[1], leaves[1])]
+
+    name_w = 470            # measured: "Dr. Abo 3tab" at 74px Georgia ≈ 465px
+    reveal = name_w + 10
+
+    css = f"""
+    @keyframes glow   {{ 0%,100% {{ opacity: .20; }} 50% {{ opacity: .40; }} }}
+    @keyframes head   {{ 0% {{ opacity: 0; }} 8% {{ opacity: .95; }} 92% {{ opacity: .95; }} 100% {{ opacity: .25; }} }}
+    @keyframes breath {{ 0%,100% {{ opacity: .55; r: 8; }} 50% {{ opacity: .95; r: 10; }} }}
+    @keyframes spin   {{ to {{ transform: rotate(360deg); }} }}
+    @keyframes rise   {{ from {{ opacity: 0; transform: translateY(8px); }} to {{ opacity: 1; transform: none; }} }}
+    @keyframes live   {{ 0%,100% {{ opacity: 1; }} 50% {{ opacity: .35; }} }}
+    @keyframes draw   {{ from {{ stroke-dashoffset: 460; }} to {{ stroke-dashoffset: 0; }} }}
+    .glow  {{ animation: glow 7s ease-in-out infinite; }}
+    .head  {{ animation: head 1.9s ease-out both; }}
+    .ring  {{ animation: spin 46s linear infinite; transform-origin: {cx}px {cy}px; }}
+    .breath{{ animation: breath 4.2s ease-in-out infinite; }}
+    .k1    {{ animation: rise .8s 1.15s cubic-bezier(.2,.7,.3,1) both; }}
+    .k2    {{ animation: rise .8s 1.35s cubic-bezier(.2,.7,.3,1) both; }}
+    .rule  {{ stroke-dasharray: 460; animation: draw 1.1s 1.0s ease-out both; }}
+    .live  {{ animation: live 2.4s ease-in-out infinite; }}
+    {REDUCED}"""
+
+    lines = "\n      ".join(
+        f'<path d="M{a[0]} {a[1]} L{b[0]} {b[1]}" opacity="0.34" stroke-width="1"/>'
+        for a, b in edges
+    )
+    dots = "\n      ".join(
+        f'<circle cx="{p[0]}" cy="{p[1]}" r="{r}" opacity="{o}"/>'
+        for p, r, o in [(p, 2.9, 0.9) for p in ring] + [(p, 2.1, 0.66) for p in leaves]
+    )
+    packets = "\n      ".join(
+        travel(f"M{e[0][0]} {e[0][1]} L{e[1][0]} {e[1][1]}", 4.2, 0.45 * i, t.accent)
+        for i, e in enumerate(edges[:5])
+    )
+
+    return f"""{head(t, W, H, f"{NAME} — local-first AI systems, autonomous agents, tools that run on your own machine")}
+  <defs>
+    <radialGradient id="sglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="{t.accent}" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="{t.accent}" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="sclip"><rect class="clip" x="0" y="60" width="{reveal}" height="90">
+      <animate attributeName="width" from="0" to="{reveal}" dur="1.8s" begin="0.35s"
+               fill="freeze" calcMode="spline" keySplines="0.22 0.9 0.25 1"
+               keyTimes="0;1" values="0;{reveal}"/>
+    </rect></clipPath>
+  </defs>
+  <style>{css}
+  </style>
+  {card(t, W, H, rx=0)}
+
+  <ellipse class="glow" cx="236" cy="126" rx="300" ry="58" fill="url(#sglow)" opacity="0.26"/>
+
+  <g stroke="{t.ink}" fill="none" opacity="0.5">
+    {ticks(30, W, 64, t.ink)}
+    <path d="M0 198 H{W}" opacity="0.22"/>
+  </g>
+
+  <g clip-path="url(#sclip)">
+    <text x="2" y="150" fill="{t.ink}" font-family="{SERIF}" font-size="74"
+          letter-spacing="0.2">{NAME}</text>
+  </g>
+
+  <rect class="head" x="{reveal - 2}" y="88" width="2.5" height="66" fill="{t.accent}"/>
+
+  <path class="rule" d="M2 174 H462" stroke="{t.accent}" stroke-width="1.6" opacity="0.85"/>
+
+  {caps(t, 4, 70, KICKER, size=12, op=0.6, cls="k1", track=4.4)}
+
+  <g class="k2">
+    <circle class="live" cx="16" cy="196" r="3.4" fill="{t.accent}"/>
+    {caps(t, 30, 200, "BUILDING JARVIS · LOCAL-FIRST", size=10, op=0.58, track=3.2)}
+  </g>
+
+  <g stroke="{t.ink}" fill="{t.ink}">
+      <circle class="ring" cx="{cx}" cy="{cy}" r="64" fill="none" opacity="0.30"
+              stroke-dasharray="3 9" stroke-width="1"/>
+      {lines}
+      {dots}
+      <circle class="breath" cx="{cx}" cy="{cy}" r="8" fill="{t.accent}"/>
+      {packets}
+  </g>
+  <circle cx="{cx}" cy="{cy}" r="2.6" fill="{t.bg}"/>
+</svg>
+"""
+
+
 BANNERS = {
+    "signal": banner_signal,
     "typewriter": banner_typewriter,
     "blueprint": banner_blueprint,
     "paper": banner_paper,

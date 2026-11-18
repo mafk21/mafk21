@@ -25,7 +25,7 @@ from artlib import ORDER, PROJECTS, THEMES  # noqa: E402
 
 BANNER_RE = re.compile(r'<source media="\(prefers-color-scheme: dark\)" srcset="assets/[\w-]+/banner\.svg">\n\s*<img src="assets/[\w-]+/banner\.svg"')
 BAND_RE = re.compile(r'<source media="\(prefers-color-scheme: dark\)" srcset="assets/[\w-]+/band\.svg">\n\s*<img src="assets/[\w-]+/band\.svg"')
-GLYPH_RE = re.compile(r'src="assets/(?!\w+/)(glyph-[\w-]+)\.svg"')
+GLYPH_RE = re.compile(r'src="assets/(?:[\w-]+/)?(glyph-[\w-]+)\.svg"')
 THEME_LINE_RE = re.compile(r'<!-- theme: \w+ -->')
 
 

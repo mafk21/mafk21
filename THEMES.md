@@ -8,10 +8,11 @@ every pixel is generated from `tools/make-themes.py`.
 
 | | Theme | Background | Type | What moves |
 | :--: | :-- | :-- | :-- | :-- |
-| `01` | **Typewriter** | terminal black `#0b0f14` | monospace | the name types itself, block caret blinks, scanline sweeps, captions rise in sequence |
-| `02` | **Blueprint** | drafting navy `#0a1a2b` | sans | every rule draws itself left-to-right, dimension marks appear, labels rise in order |
-| `03` | **Paper** | warm off-white `#f4efe5` | serif | name rises, "APPROVED · LOCAL ONLY" stamp lands with a rotate-and-settle, marks fade in |
-| `04` | **Swarm** | GitHub dark `#0d1117` | serif | node graph with packets travelling its edges, hub pulse, cursors drawing the page |
+| `01` | **Signal** | near-black `#08090c` | serif | the name is written out by a clip reveal with an amber write-head, then fills; amber rule draws under it; the graph answers with amber packets and slow orbit rings |
+| `02` | **Swarm** | GitHub dark `#0d1117` | serif | node graph with packets travelling its edges, hub pulse, cursors drawing the page |
+| `03` | **Typewriter** | terminal black `#0b0f14` | monospace | the name types itself, block caret blinks, scanline sweeps, captions rise in sequence |
+| `04` | **Blueprint** | drafting navy `#0a1a2b` | sans | every rule draws itself left-to-right, dimension marks appear, labels rise in order |
+| `05` | **Paper** | warm off-white `#f4efe5` | serif | name rises, "APPROVED · LOCAL ONLY" stamp lands with a rotate-and-settle, marks fade in |
 
 Each theme carries the same written content — intro, six projects, principles,
 links — and its own band + six project glyphs, so switching never leaves a
@@ -35,7 +36,7 @@ Every theme paints its own background inside the SVG. That means no
 pale art vanishing on a pale page. The trade-off is deliberate: the profile is
 always *the theme's* colour, not GitHub's.
 
-## Adding a fifth
+## Adding another
 
 1. Add a `Theme` to `THEMES` in `tools/artlib.py` and its key to `ORDER`.
 2. Add a `banner_<name>()` to `BANNERS` in `tools/make-themes.py`.
