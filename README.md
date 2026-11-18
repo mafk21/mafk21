@@ -5,7 +5,7 @@
 
 I build AI systems that run on your own machine and hand back something you own — a file, an HTML page, a deck, a folder of evidence. No account, no backend, no subscription standing between you and the work.
 
-Right now that means **JARVIS**, a local-first assistant that sees your screen and operates your computer, and **Swarmcraft**, which draws a website with nine AI cursors and leaves you the HTML.
+**Now:** JARVIS — a local AI that actually operates your computer — and Swarmcraft, nine cursors that draw a website and hand you the HTML.
 
 **Selected work**
 
