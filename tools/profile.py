@@ -6,9 +6,9 @@
     python3 tools/profile.py paper           # switch by name
     python3 tools/profile.py --current       # print just the active name
 
-Switching rewrites only the art references and the theme notes in README.md.
-The written content — intro, projects, principles, links — is shared by every
-theme, so the profile never drifts out of sync with itself.
+The profile is a single animated card, so switching rewrites one `src`/`srcset`
+pair in README.md. The card carries all the written content, which keeps the
+README from drifting out of sync with itself.
 """
 
 from __future__ import annotations
@@ -23,42 +23,35 @@ README = ROOT / "README.md"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from artlib import ORDER, PROJECTS, THEMES  # noqa: E402
 
-BANNER_RE = re.compile(r'<source media="\(prefers-color-scheme: dark\)" srcset="assets/[\w-]+/banner\.svg">\n\s*<img src="assets/[\w-]+/banner\.svg"')
-BAND_RE = re.compile(r'<source media="\(prefers-color-scheme: dark\)" srcset="assets/[\w-]+/band\.svg">\n\s*<img src="assets/[\w-]+/band\.svg"')
-GLYPH_RE = re.compile(r'src="assets/(?:[\w-]+/)?(glyph-[\w-]+)\.svg"')
-THEME_LINE_RE = re.compile(r'<!-- theme: \w+ -->')
+CARD_RE = re.compile(r'assets/card-[\w-]+\.svg')
+ART_RE = re.compile(r'assets/[\w./-]+\.svg')
+THEME_LINE_RE = re.compile(r'<!-- theme: [\w-]+ -->\n*')
 
 
 def current() -> str:
     m = THEME_LINE_RE.search(README.read_text())
-    return m.group(0).split("theme: ")[1].rstrip(" ->") if m else ORDER[0]
+    if not m:
+        return ORDER[0]
+    # capture the name itself, not the raw match (which carries trailing newlines)
+    return re.search(r'<!-- theme: ([\w-]+) -->', m.group(0)).group(1)
 
 
 def render(theme: str) -> None:
     md = README.read_text()
     t = THEMES[theme]
 
-    md = BANNER_RE.sub(
-        f'<source media="(prefers-color-scheme: dark)" srcset="assets/{theme}/banner.svg">\n'
-        f'  <img src="assets/{theme}/banner.svg"',
-        md,
-    )
-    md = BAND_RE.sub(
-        f'<source media="(prefers-color-scheme: dark)" srcset="assets/{theme}/band.svg">\n'
-        f'  <img src="assets/{theme}/band.svg"',
-        md,
-    )
-    md = GLYPH_RE.sub(lambda m: f'src="assets/{theme}/{m.group(1)}.svg"', md)
+    md = CARD_RE.sub(f"assets/card-{theme}.svg", md)
 
+    # One marker, always at the top, however many times this runs.
     theme_line = f"<!-- theme: {theme} -->"
-    if THEME_LINE_RE.search(md):
-        md = THEME_LINE_RE.sub(theme_line, md, count=1)
-    else:  # first switch: stamp it right under the banner
-        md = md.replace("</picture>\n\n", f"</picture>\n\n{theme_line}\n\n", 1)
+    md = THEME_LINE_RE.sub("", md).lstrip("\n")
+    md = f"{theme_line}\n\n{md}"
 
+    # The note is documentation only. Whatever we write here must stay inside a
+    # comment, or it renders as body copy on the profile.
     md = re.sub(
-        r'<!-- theme-note -->.*?<!-- /theme-note -->',
-        f"<!-- theme-note -->{t.label} — {t.note}<!-- /theme-note -->",
+        r'<!-- theme-note: .*?-->',
+        f"<!-- theme-note: {t.label} — {t.note} -->",
         md,
         flags=re.S,
     )
