@@ -23,7 +23,7 @@ README = ROOT / "README.md"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from artlib import ORDER, PROJECTS, THEMES  # noqa: E402
 
-CARD_RE = re.compile(r'assets/card-[\w-]+\.svg')
+CARD_RE = re.compile(r'assets/card-[\w-]+(?:\.compact)?\.svg')
 ART_RE = re.compile(r'assets/[\w./-]+\.svg')
 THEME_LINE_RE = re.compile(r'<!-- theme: [\w-]+ -->\n*')
 
@@ -40,7 +40,11 @@ def render(theme: str) -> None:
     md = README.read_text()
     t = THEMES[theme]
 
-    md = CARD_RE.sub(f"assets/card-{theme}.svg", md)
+    # Two refs per card now: desktop and the compact phone variant.
+    def swap(m: re.Match) -> str:
+        suffix = "-compact" if "compact" in m.group(0) else ""
+        return f"assets/card-{theme}{suffix}.svg"
+    md = CARD_RE.sub(swap, md)
 
     # One marker, always at the top, however many times this runs.
     theme_line = f"<!-- theme: {theme} -->"
