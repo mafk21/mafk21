@@ -1,1 +1,3 @@
 .preview-tmp/
+__pycache__/
+*.pyc
