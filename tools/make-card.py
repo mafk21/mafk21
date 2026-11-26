@@ -188,9 +188,9 @@ def flow_band(t: Theme, top: int) -> tuple[str, int]:
     scale = 1.0 if not COMPACT else 1.12
     icons = {
         "brief": f'''<g stroke="{t.ink}" fill="none" stroke-width="1.5" stroke-linecap="round">
-        <rect x="{0}" y="{0}" width="34" height="44" rx="2"/>
-        <path d="M9 12 H23"/><path d="M9 21 H29"/><path d="M9 30 H17" opacity="0.5"/>
-        <path d="M26 33 V42" stroke-width="2">
+        <rect x="-17" y="-22" width="34" height="44" rx="2"/>
+        <path d="M-8 -10 H6"/><path d="M-8 -1 H12"/><path d="M-8 8 H0" opacity="0.5"/>
+        <path d="M9 11 V20" stroke-width="2">
           <animate attributeName="opacity" values="1;0;1" dur="1.15s" repeatCount="indefinite"/></path></g>''',
         "agents": f'''<g stroke="{t.ink}" fill="none" stroke-width="1.5">
         <rect x="-8" y="12" width="16" height="11" rx="1.5" opacity="0.5"/></g>
@@ -221,9 +221,9 @@ def flow_band(t: Theme, top: int) -> tuple[str, int]:
     for i, (x, (kind, name, gloss)) in enumerate(zip(xs, STATIONS)):
         d = 0.9 + i * 0.16
         parts.append(f'''
-  <g transform="translate({x} {cy})" fill="{t.ink}" class="stn" style="animation-delay:{d}s">
+  <g fill="{t.ink}" class="stn" style="animation-delay:{d}s"><g transform="translate({x} {cy})">
     {icons[kind]}
-  </g>
+  </g></g>
   {caps(t, x, cy + 58, f"0{i+1}", size=_st(10), op=0.78, anchor="middle", fill=t.accent,
         cls="stn", track=2.2).replace('<text', f'<text style="animation-delay:{d + .12}s"', 1)}
   {caps(t, x, cy + _st(82), name, size=_st(13), op=0.95, anchor="middle", cls="stn", track=3.2)
@@ -239,6 +239,7 @@ def flow_band(t: Theme, top: int) -> tuple[str, int]:
             f'stroke-dasharray="2 7" stroke-width="1.2">'
             f'<animate attributeName="stroke-dashoffset" values="0;-18" dur="1.5s" '
             f'repeatCount="indefinite"/></path>'
+            f'<path d="M{b - 8} {cy - 5} L{b} {cy} L{b - 8} {cy + 5}" opacity="0.55" stroke-width="1.2"/>'
         )
         packets.append(travel(f"M{a} {cy} L{b} {cy}", 3.0, 0.5 + i * 0.75, t.accent, 2.4))
 
@@ -435,7 +436,7 @@ def card(t: Theme) -> str:
     css = f"""
     @keyframes rise    {{ from {{ opacity: 0; transform: translateY(9px); }} to {{ opacity: 1; transform: none; }} }}
     @keyframes draw    {{ from {{ stroke-dashoffset: 372; }} to {{ stroke-dashoffset: 0; }} }}
-    @keyframes writehead {{ 0% {{ opacity: 0; }} 6% {{ opacity: .95; }} 94% {{ opacity: .95; }} 100% {{ opacity: .22; }} }}
+    @keyframes writehead {{ 0% {{ opacity: 0; }} 6% {{ opacity: .95; }} 94% {{ opacity: .95; }} 100% {{ opacity: 0; }} }}
     @keyframes breath  {{ 0%,100% {{ opacity: .55; r: 7; }} 50% {{ opacity: .95; r: 9; }} }}
     @keyframes spin    {{ to {{ transform: rotate(360deg); }} }}
     @keyframes live    {{ 0%,100% {{ opacity: 1; }} 50% {{ opacity: .3; }} }}
